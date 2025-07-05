@@ -1,5 +1,6 @@
 package com.ltsllc.commons.util;
 
+import com.ltsllc.jceutils.Utils;
 import org.junit.Test;
 
 import java.security.KeyPair;
@@ -16,6 +17,6 @@ public class UtilsTest {
         keyPairGenerator.initialize(2048);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         PublicKey publicKey = keyPair.getPublic();
-        // Utils.writeAsPem("whatever", publicKey);
+        Utils.writeAsPem("whatever", publicKey);
     }
 }
