@@ -30,7 +30,8 @@ public class HexConverter {
 
         for (int c = inputStreamReader.read(); c != -1; c = inputStreamReader.read())
         {
-            stringBuilder.append(toHexString(c));
+            byte b = (byte) (c & 0xFF);
+            stringBuilder.append(toHexString(b));
         }
 
         return stringBuilder.toString();
@@ -53,8 +54,8 @@ public class HexConverter {
     public static byte[] toByteArray (String s)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        for (int index = 0; index < s.length(); index++) {
-            String subString = s.substring(index, index + 1);
+        for (int index = 0; index < s.length(); index = index + 2) {
+            String subString = s.substring(index, index + 2);
             byte b = toByte(subString);
             baos.write(b);
         }
@@ -62,10 +63,15 @@ public class HexConverter {
     }
 
     public static byte toByte (String string) {
-        int index = theChars.indexOf(string.toCharArray()[0]);
-        int higNibble = index << 4;
-        index = theChars.indexOf(string.toCharArray()[1]);
-        byte b = (byte) (higNibble | index);
-        return b;
+        if (string.length() < 2) {
+            throw new IllegalArgumentException("asked to convert a string for, " + string);
+        }
+        char c1 = string.charAt(0);
+        byte highNibble = (byte) (theChars.indexOf(c1) << 4);
+        char c2 = string.charAt(1);
+        byte lowNibble = (byte)theChars.indexOf(c2);
+        byte result = (byte) (highNibble | lowNibble);
+
+        return result;
     }
 }

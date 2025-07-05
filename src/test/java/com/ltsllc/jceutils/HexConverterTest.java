@@ -2,6 +2,9 @@ package com.ltsllc.jceutils;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.*;
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class HexConverterTest {
@@ -19,21 +22,41 @@ class HexConverterTest {
 
     @Test
     void testToHexString() {
-    }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    @Test
-    void testToHexString1() {
-    }
+        baos.write(100);
+        baos.write( 64);
+        baos.write(100);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        InputStreamReader inputStreamReader = new InputStreamReader(bais);
+        String string = null;
+        try {
+            string = HexConverter.toHexString(inputStreamReader);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-    @Test
-    void testToHexString2() {
+        assert (string.equalsIgnoreCase("644064"));
     }
 
     @Test
     void toByteArray() {
+        String string = "644064";
+        byte[] bytes = HexConverter.toByteArray(string);
+
+        byte[] expected = { 100, 64, 100 };
+        assert (Arrays.equals(bytes, expected));
     }
 
     @Test
     void toByte() {
+    }
+
+    @Test
+    void testToHexString3() {
+    }
+
+    @Test
+    void testToByteArray() {
     }
 }
