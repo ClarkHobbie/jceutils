@@ -9,26 +9,16 @@ import java.io.InputStreamReader;
  */
 public class HexConverter {
 
-    public static String toHexString (byte aByte) {
-        StringBuilder stringBuilder;
-
-        stringBuilder = new StringBuilder();
-        toHexString(aByte, stringBuilder);
-        return stringBuilder.toString();
-    }
-
     private static final String theChars = "0123456789ABCDEF";
 
-    public static String toHexString (int aByte, StringBuilder stringBuilder) {
-        byte highOrderNibble1 = (byte) (aByte & 0xF000);
-        byte highOrderNibble2 = (byte) (aByte & 0xF00);
-        byte lowOrderNibble1 = (byte) (aByte & 0xF0);
-        byte lowOrderNibble2 = (byte) (aByte & 0xF);
+    public static String toHexString (int aByte) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int firstChar = aByte & 0b11110000;
+        firstChar = firstChar >> 4;
+        int secondChar = aByte & 0b1111;
 
-        stringBuilder.append(theChars.charAt(highOrderNibble1));
-        stringBuilder.append(theChars.charAt(highOrderNibble2));
-        stringBuilder.append(theChars.charAt(lowOrderNibble1));
-        stringBuilder.append(theChars.charAt(lowOrderNibble2));
+        stringBuilder.append(theChars.charAt(firstChar));
+        stringBuilder.append(theChars.charAt(secondChar));
 
         return stringBuilder.toString();
     }
@@ -36,14 +26,14 @@ public class HexConverter {
     public static String toHexString (InputStreamReader inputStreamReader)
             throws IOException
     {
-        StringBuilder stringBuilder2 = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
         for (int c = inputStreamReader.read(); c != -1; c = inputStreamReader.read())
         {
-            stringBuilder2.append(toHexString(c,stringBuilder2));
+            stringBuilder.append(toHexString(c));
         }
 
-        return stringBuilder2.toString();
+        return stringBuilder.toString();
     }
 
 

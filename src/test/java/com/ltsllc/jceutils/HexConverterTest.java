@@ -8,6 +8,13 @@ class HexConverterTest {
 
     @Test
     void toHexString() {
+        //
+         // test HexConverter.toHexString(byte)
+        //
+        byte b = 100;
+        String string = HexConverter.toHexString(b);
+
+        assert (string.equalsIgnoreCase("64"));
     }
 
     @Test
