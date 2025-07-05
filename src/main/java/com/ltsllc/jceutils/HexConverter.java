@@ -75,7 +75,7 @@ public class HexConverter {
         int index = theChars.indexOf(string.toCharArray()[0]);
         int higNibble = index << 4;
         index = theChars.indexOf(string.toCharArray()[1]);
-        byte b = (byte) (higNibble & index);
+        byte b = (byte) (higNibble | index);
         return b;
     }
 }
