@@ -17,7 +17,11 @@
 package com.ltsllc.jceutils;
 
 
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -410,7 +414,7 @@ public class Utils {
         return byteBuffer.array();
     }
 
-    /*
+
     public static PublicKey pemStringToPublicKey(String pemString) throws IOException {
         StringReader stringReader = new StringReader(pemString);
 
@@ -419,7 +423,6 @@ public class Utils {
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
         return converter.getPublicKey(subjectPublicKeyInfo);
     }
-    */
 
 
     public static String publicKeyToPemString(PublicKey publicKey) throws IOException {
