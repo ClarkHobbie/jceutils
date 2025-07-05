@@ -26,10 +26,10 @@ import java.security.cert.Certificate;
 /******************************************************************************
  * I don't remember what this class is for.
  */
-public class JavaKeyStore {
+public class LtsllcKeyStore {
     private KeyStore keyStore;
 
-    public JavaKeyStore (KeyStore keyStore) {
+    public LtsllcKeyStore(KeyStore keyStore) {
         this.keyStore = keyStore;
     }
 
