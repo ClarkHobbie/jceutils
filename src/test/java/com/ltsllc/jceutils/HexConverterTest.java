@@ -84,6 +84,7 @@ class HexConverterTest {
 
         assert (string.equalsIgnoreCase("206423"));
     }
+
     @Test
     void toByte() {
         String test1 = "64";
@@ -97,9 +98,5 @@ class HexConverterTest {
         result = HexConverter.toByte(test2);
 
         assert (result == 64);
-    }
-
-    @Test
-    void testToByteArray() {
     }
 }
