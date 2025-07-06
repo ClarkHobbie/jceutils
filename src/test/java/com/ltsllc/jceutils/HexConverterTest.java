@@ -49,11 +49,54 @@ class HexConverterTest {
     }
 
     @Test
-    void toByte() {
+    void testToHexString2 () {
+        //
+         // test HexConverter.toHexString (byte[])
+        //
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(32);
+        baos.write(100);
+        baos.write(35);
+
+        String string = HexConverter.toHexString(baos.toByteArray());
+
+        assert (string.equalsIgnoreCase("206423"));
     }
 
     @Test
-    void testToHexString3() {
+    void testToHexString3 () {
+        //
+         // test HexConverter.toHexString(InputStreamReader)
+        //
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(32);
+        baos.write(100);
+        baos.write(35);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        InputStreamReader isr = new InputStreamReader(bais);
+        String string = null;
+        try {
+            string = HexConverter.toHexString(isr);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        assert (string.equalsIgnoreCase("206423"));
+    }
+    @Test
+    void toByte() {
+        String test1 = "64";
+
+        byte result = HexConverter.toByte(test1);
+
+        assert (result == 100);
+
+        String test2 = "40";
+
+        result = HexConverter.toByte(test2);
+
+        assert (result == 64);
     }
 
     @Test

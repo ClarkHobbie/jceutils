@@ -67,7 +67,8 @@ public class HexConverter {
             throw new IllegalArgumentException("asked to convert a string for, " + string);
         }
         char c1 = string.charAt(0);
-        byte highNibble = (byte) (theChars.indexOf(c1) << 4);
+        int index = theChars.indexOf(c1);
+        byte highNibble = (byte) (index << 4);
         char c2 = string.charAt(1);
         byte lowNibble = (byte)theChars.indexOf(c2);
         byte result = (byte) (highNibble | lowNibble);
