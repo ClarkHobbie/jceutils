@@ -1,4 +1,4 @@
-package com.ltsllc.commons.util;
+package com.ltsllc.jceutils;
 
 import com.ltsllc.jceutils.Utils;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import java.security.PublicKey;
  */
 public class UtilsTest {
     @Test
-    public void encryption () throws Exception {
+    public void testEncryption() throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();

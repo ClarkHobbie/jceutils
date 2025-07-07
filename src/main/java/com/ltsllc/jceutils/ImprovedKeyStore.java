@@ -16,37 +16,30 @@
 
 package com.ltsllc.jceutils;
 
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.cert.Certificate;
 
 
 /******************************************************************************
  * I don't remember what this class is for.
  */
-public class LtsllcKeyStore {
-    private KeyStore keyStore;
+public class ImprovedKeyStore  {
 
-    public LtsllcKeyStore(KeyStore keyStore) {
-        this.keyStore = keyStore;
+    public static PrivateKey getPrivateKey(KeyStore keyStore, String alias, char[] password)
+            throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        return (PrivateKey) keyStore.getKey(alias, password);
     }
 
-    public KeyStore getKeyStore() {
-        return keyStore;
-    }
-
-    public PrivateKey getPrivateKey (String alias) throws GeneralSecurityException {
-        return (PrivateKey) getKeyStore().getKey(alias, "whatever".toCharArray());
-    }
-
-    public PublicKey getPublicKey (String alias) throws GeneralSecurityException {
-        Certificate certificate = getKeyStore().getCertificate(alias);
+    public static PublicKey getPublicKey(KeyStore keyStore, String alias) throws GeneralSecurityException {
+        Certificate certificate = keyStore.getCertificate(alias);
         return certificate.getPublicKey();
     }
 
-    public Certificate getCertificate (String alias) throws GeneralSecurityException {
-        return getKeyStore().getCertificate(alias);
+    public static Certificate getCertificate (KeyStore keyStore, String alias) {
+        try {
+            return keyStore.getCertificate(alias);
+        } catch (KeyStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

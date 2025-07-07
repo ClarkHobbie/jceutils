@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HexConverterTest {
 
     @Test
-    void toHexString() {
+    void testToHexString4() {
         //
          // test HexConverter.toHexString(byte)
         //
@@ -40,7 +40,7 @@ class HexConverterTest {
     }
 
     @Test
-    void toByteArray() {
+    void testToByteArray() {
         String string = "644064";
         byte[] bytes = HexConverter.toByteArray(string);
 
@@ -86,7 +86,7 @@ class HexConverterTest {
     }
 
     @Test
-    void toByte() {
+    void testToByte() {
         String test1 = "64";
 
         byte result = HexConverter.toByte(test1);
