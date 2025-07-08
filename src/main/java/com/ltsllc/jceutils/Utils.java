@@ -108,6 +108,17 @@ public class Utils {
         return keyStore;
     }
 
+    public static void storeKeyStore(KeyStore keyStore, String filename, String password)
+            throws GeneralSecurityException,IOException {
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(filename);
+            keyStore.store(fileOutputStream, password.toCharArray());
+        } finally {
+            closeIgnoreExceptions(fileOutputStream);
+        }
+    }
+
 
     public static void closeIgnoreExceptions(InputStream inputStream) {
         if (null != inputStream) {

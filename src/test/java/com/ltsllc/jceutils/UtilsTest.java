@@ -6,8 +6,11 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.*;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 
 /**
  * Created by Clark on 6/28/2017.
@@ -58,8 +61,52 @@ public class UtilsTest {
         assert (certificate.equals(otherCert));
     }
 
-    @org.junit.jupiter.api.Test
-    void loadKeyStore() {
+    public static X509Certificate loadCertificate(String filename, String passwordString, String alias)
+            throws GeneralSecurityException, IOException {
+        X509Certificate certificate = null;
+        FileInputStream fileInputStream = null;
+
+        try {
+            fileInputStream = new FileInputStream(filename);
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(fileInputStream, passwordString.toCharArray());
+            certificate = (X509Certificate) keyStore.getCertificate(alias);
+        } finally {
+            fileInputStream.close();
+        }
+
+        return certificate;
+    }
+
+
+
+    @Test
+    public void testLoadKeyStore() throws Exception {
+        String filename = "whatever";
+        String password = "whatever";
+        String certAlias = "certificate";
+        Certificate certificate = null;
+        Certificate otherCert = null;
+
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+            certificate = Utils.selfSign(keyPair, "dn=whatever");
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry(certAlias, certificate);
+
+            Utils.storeKeyStore(keyStore,filename, password);
+
+            otherCert = Utils.loadCertificate(filename, password, certAlias);
+        } finally {
+            File file = new File(filename);
+            if (file.exists())
+                file.delete();
+        }
+
+        assert (certificate.equals(otherCert));
     }
 
     @org.junit.jupiter.api.Test
