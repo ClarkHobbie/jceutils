@@ -30,6 +30,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.util.io.pem.PemReader;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -465,6 +466,19 @@ public class Utils {
             Utils.closeIgnoreExceptions(fileWriter);
         }
     }
+
+    public static PublicKey readPublicKeyFromPem(String filePath) throws Exception {
+        try (PEMParser pemParser = new PEMParser(new FileReader(filePath))) {
+            Object object = pemParser.readObject();
+            if (object instanceof SubjectPublicKeyInfo) {
+                JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
+                return converter.getPublicKey((SubjectPublicKeyInfo) object);
+            } else {
+                throw new IllegalArgumentException("Expected SubjectPublicKeyInfo in PEM file.");
+            }
+        }
+    }
+
 
     /*
     public static String toPem (PublicKey publicKey, String password) {
