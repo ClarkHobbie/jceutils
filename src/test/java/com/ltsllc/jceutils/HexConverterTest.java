@@ -2,10 +2,11 @@ package com.ltsllc.jceutils;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class HexConverterTest {
 

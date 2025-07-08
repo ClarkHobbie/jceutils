@@ -1,6 +1,5 @@
 package com.ltsllc.jceutils;
 
-import com.ltsllc.jceutils.Utils;
 import org.junit.Test;
 
 import java.security.KeyPair;
