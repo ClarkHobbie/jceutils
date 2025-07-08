@@ -1,26 +1,30 @@
 package com.ltsllc.jceutils;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PublicKey;
-import java.security.Security;
+import java.security.*;
+import java.security.cert.Certificate;
 
 /**
  * Created by Clark on 6/28/2017.
  */
 public class UtilsTest {
+    @Before
+    public void setUp() {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     @Test
-    public void testEncryption() throws Exception {
+    public void testReadPublicKeyFromPem() throws Exception {
         File file = new File("whatever");
         PublicKey publicKey = null;
         PublicKey otherPublicKey = null;
 
         try {
-            Security.addProvider(new BouncyCastleProvider());
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048);
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -36,13 +40,22 @@ public class UtilsTest {
     }
 
     @Test
-    public void testLoadKey() {
-        int whatever = 13;
-        whatever++;
-    }
+    public void testLoadCertificate() throws Exception {
+        File file = new File("whatever");
+        PublicKey publicKey = null;
+        PublicKey otherPublicKey = null;
+        Certificate certificate = null;
 
-    @org.junit.jupiter.api.Test
-    void loadCertificate() {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        certificate = Utils.selfSign(keyPair, "dn=whatever");
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        char[] password = "whatever".toCharArray();
+        keyStore.load (null, null);
+        keyStore.setCertificateEntry("certificate", certificate);
+        Certificate otherCert = keyStore.getCertificate("certificate");
+
+        assert (certificate.equals(otherCert));
     }
 
     @org.junit.jupiter.api.Test
