@@ -95,7 +95,7 @@ public class UtilsTest {
             keyStore.load(null, null);
             keyStore.setCertificateEntry(certAlias, certificate);
 
-            Utils.storeKeyStore(keyStore,filename, password);
+            Utils.storeKeyStore(keyStore, filename, password);
 
             otherCert = Utils.loadCertificate(filename, password, certAlias);
         } finally {
@@ -166,7 +166,7 @@ public class UtilsTest {
 
             fileOutputStream = null;
             Utils.closeIgnoreExceptions(fileOutputStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             exception = e;
         } finally {
             if (file.exists())
