@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.Certificate;
@@ -109,12 +110,45 @@ public class UtilsTest {
         assert (certificate.equals(otherCert));
     }
 
-    @org.junit.jupiter.api.Test
-    void closeIgnoreExceptions() {
-    }
+    @Test
+    public void testCloseIgnoreExceptions() throws Exception {
+        String filenameExisting = "whatever";
+        File existingFile = new File(filenameExisting);
+        String nonExistingFileName = "no exist";
+        File nonExistingFile = new File(nonExistingFileName);
+        Exception exception = null;
 
-    @org.junit.jupiter.api.Test
-    void testCloseIgnoreExceptions() {
+        try {
+            if (!existingFile.exists()) {
+                existingFile.createNewFile();
+            }
+
+            FileInputStream fileInputStream = new FileInputStream(existingFile);
+            try {
+                Utils.closeIgnoreExceptions(fileInputStream);
+            } catch (Exception e) {
+                exception = e;
+            }
+
+            if (nonExistingFile.exists()) {
+                nonExistingFile.delete();
+            }
+
+            fileInputStream = null;
+            try {
+                Utils.closeIgnoreExceptions(fileInputStream);
+            } catch (Exception e) {
+                exception = e;
+            }
+        } finally {
+            if (existingFile.exists())
+                existingFile.delete();
+
+            if (nonExistingFile.exists())
+                nonExistingFile.delete();
+        }
+
+        assert (exception == null);
     }
 
     @org.junit.jupiter.api.Test
