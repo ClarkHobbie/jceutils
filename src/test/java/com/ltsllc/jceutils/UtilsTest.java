@@ -5,10 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -184,7 +181,35 @@ public class UtilsTest {
     }
 
     @org.junit.jupiter.api.Test
-    void testCloseIgnoreExceptions2() {
+    void testCloseIgnoreExceptions2() throws Exception {
+        //
+         // test for a reader
+        //
+        File file = new File("whatever");
+        if (!file.exists())
+            file.createNewFile();
+        Exception exception = null;
+        FileReader fileReader = null;
+
+        try {
+            fileReader = new FileReader(file);
+            Utils.closeIgnoreExceptions(fileReader);
+
+            fileReader = null;
+            Utils.closeIgnoreExceptions(fileReader);
+        } catch (IOException e) {
+            exception = e;
+        } finally {
+            if (file.exists())
+                file.delete();
+
+            if (fileReader != null) {
+                fileReader.close();
+            }
+        }
+
+        assert (exception == null);
+
     }
 
     @org.junit.jupiter.api.Test
