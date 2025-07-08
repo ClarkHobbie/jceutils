@@ -180,8 +180,8 @@ public class UtilsTest {
         assert (exception == null);
     }
 
-    @org.junit.jupiter.api.Test
-    void testCloseIgnoreExceptions2() throws Exception {
+    @Test
+    public void testCloseIgnoreExceptions2() throws Exception {
         //
          // test for a reader
         //
@@ -212,8 +212,35 @@ public class UtilsTest {
 
     }
 
-    @org.junit.jupiter.api.Test
-    void testCloseIgnoreExceptions3() {
+    @Test
+    public void testCloseIgnoreExceptions3() throws Exception {
+        //
+        // test for a reader
+        //
+        File file = new File("whatever");
+        if (!file.exists())
+            file.delete();
+        Exception exception = null;
+        FileWriter fileWriter = null;
+
+        try {
+            fileWriter = new FileWriter(file);
+            Utils.closeIgnoreExceptions(fileWriter);
+
+            fileWriter = null;
+            Utils.closeIgnoreExceptions(fileWriter);
+        } catch (IOException e) {
+            exception = e;
+        } finally {
+            if (file.exists())
+                file.delete();
+
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+        }
+
+        assert (exception == null);
     }
 
     @org.junit.jupiter.api.Test
