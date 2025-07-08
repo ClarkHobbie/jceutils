@@ -108,7 +108,6 @@ class ImprovedKeyStoreTest {
         }
 
         assert (publicKey != null);
-
-
+        assert (publicKey.equals (keyPair.getPublic()));
     }
 }
