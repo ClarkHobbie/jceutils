@@ -151,8 +151,36 @@ public class UtilsTest {
         assert (exception == null);
     }
 
-    @org.junit.jupiter.api.Test
-    void testCloseIgnoreExceptions1() {
+    @Test
+    public void testCloseIgnoreExceptions1() throws Exception {
+        //
+         // test it with an OutputStream
+        //
+        File file = new File("whatever");
+        if (file.exists())
+            file.delete();
+        Exception exception = null;
+        FileOutputStream fileOutputStream = null;
+
+        try {
+            fileOutputStream = new FileOutputStream(file);
+            Utils.closeIgnoreExceptions(fileOutputStream);
+            fileOutputStream.close();
+
+            fileOutputStream = null;
+            Utils.closeIgnoreExceptions(fileOutputStream);
+        } catch (IOException e) {
+            exception = e;
+        } finally {
+            if (file.exists())
+                file.delete();
+
+            if (fileOutputStream != null) {
+                fileOutputStream.close();
+            }
+        }
+
+        assert (exception == null);
     }
 
     @org.junit.jupiter.api.Test
