@@ -75,5 +75,40 @@ class ImprovedKeyStoreTest {
 
     @Test
     void testGetPublicKey() {
+        KeyStore keyStore = null;
+        try {
+            keyStore = KeyStore.getInstance("JKS");
+        } catch (KeyStoreException e) {
+            throw new RuntimeException(e);
+        }
+
+        KeyPair keyPair = null;
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPair = keyPairGenerator.generateKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        Certificate certificate = null;
+        try {
+            keyStore.load(null, null);
+            certificate = Utils.selfSign(keyPair, "dn=whatever");
+            keyStore.setCertificateEntry("certificate", certificate);
+        } catch (GeneralSecurityException|OperatorCreationException|IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        PublicKey publicKey = null;
+
+        try {
+            publicKey = ImprovedKeyStore.getPublicKey(keyStore,"certificate");
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
+
+        assert (publicKey != null);
+
+
     }
 }
