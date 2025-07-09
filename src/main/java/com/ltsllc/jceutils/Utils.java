@@ -286,25 +286,24 @@ public class Utils {
     }
 
 
-    public static String readInputStream(InputStream inputStream) throws IOException {
+    public static String inputStreamToString(InputStream inputStream)
+            throws IOException {
         InputStreamReader inputStreamReader = null;
-        StringWriter stringWriter = null;
+        StringBuilder stringBuilder = null;
 
         try {
-            stringWriter = new StringWriter();
+            stringBuilder = new StringBuilder();
             inputStreamReader = new InputStreamReader(inputStream);
-
             int c = inputStreamReader.read();
             while (c != -1) {
-                stringWriter.write(c);
+                stringBuilder.append(c);
                 c = inputStreamReader.read();
             }
 
-            return stringWriter.toString();
+            return stringBuilder.toString();
         } finally {
             Utils.closeIgnoreExceptions(inputStreamReader);
             Utils.closeIgnoreExceptions(inputStream);
-            Utils.closeIgnoreExceptions(stringWriter);
         }
     }
 

@@ -327,8 +327,13 @@ public class UtilsTest {
         assert (string.equalsIgnoreCase("010203"));
     }
 
-    @org.junit.jupiter.api.Test
-    void readInputStream() {
+    @Test
+    public void testReadInputStream() throws Exception {
+        byte[] bytes = { 1,2,3 };
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        String string = Utils.inputStreamToString(bais);
+
+        assert (string.equalsIgnoreCase("123"));
     }
 
     @org.junit.jupiter.api.Test
