@@ -4,11 +4,17 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * Created by Clark on 6/28/2017.
@@ -336,8 +342,23 @@ public class UtilsTest {
         assert (string.equalsIgnoreCase("123"));
     }
 
-    @org.junit.jupiter.api.Test
-    void cipherStreamToString() {
+    @Test
+    public void testEncrypt() throws Exception {
+        String clearText = "This is a confidential message.";
+
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
+        // Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding")
+        keyGenerator.init(56);
+        Key key = keyGenerator.generateKey();
+        String algorithm = "DES/ECB/PKCS5Padding";
+
+        String cipherText = Utils.encrypt(algorithm, key, clearText);
+
+        String result = Utils.decrypt(algorithm, key, cipherText);
+
+
+        // Verify that the decryption was successful
+        assert (clearText.equals(result));
     }
 
     @org.junit.jupiter.api.Test

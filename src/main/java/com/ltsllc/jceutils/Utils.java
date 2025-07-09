@@ -23,6 +23,7 @@ import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.crypto.util.CipherFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PEMWriter;
@@ -31,8 +32,7 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
+import javax.crypto.*;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -55,6 +55,33 @@ import java.util.List;
  * Created by Clark on 2/3/2017.
  */
 public class Utils {
+    public static final String ALGORITHM_AES = "AES";
+    public static final String ALGORITHM_DES = "DES";
+    public static final String ALGORITHM_TRIPLE_DES = "Triple DES";
+    public static final String[] SYMMETRIC_ALGORITHMS = {
+            ALGORITHM_TRIPLE_DES,
+            ALGORITHM_AES,
+            ALGORITHM_DES
+    };
+
+    public static final String PADDING_PKCS5 = "PKCS5";
+    public static final String PADDING_PKCS1 = "PKCS1";
+    public static final String PADDING_OAEPWithSHA1AndMGF1 = "OAEPWithSHA-1AndMGF1";
+
+    public  static final String[] ALGORITHMS = {
+            "DSA",
+            "SHA-1",
+            "PKIX",
+            "MD2",
+            "MD5",
+            "SHA1PRNG",
+            "SHA-512/256",
+            "SHA3-512",
+            "HSS/LMS",
+            "ML-DSA-65",
+            "SHA-256"
+    };
+
     public static PrivateKey loadKey(String filename, String passwordString, String alias) throws GeneralSecurityException, IOException {
         PrivateKey privateKey = null;
         FileInputStream fileInputStream = null;
@@ -308,20 +335,48 @@ public class Utils {
     }
 
 
-    public static String cipherStreamToString(CipherInputStream cipherInputStream) throws IOException {
-        StringWriter stringWriter = new StringWriter();
+    public static String encrypt(String algorithm, Key key, String clearText)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.ENCRYPT_MODE, key);
 
-        int b = cipherInputStream.read();
-        while (-1 != b) {
-            String stringByte = byteToHexString((byte) b);
-            stringWriter.write(stringByte);
-            b = cipherInputStream.read();
+        ByteArrayInputStream bais = new ByteArrayInputStream(clearText.getBytes());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        for (int b = bais.read(); b != -1; b = bais.read()) {
+            byte[] bytes = { (byte) b };
+            baos.write(cipher.update(bytes));
         }
 
-        stringWriter.close();
-        return stringWriter.toString();
-
+        byte[] bytes = cipher.doFinal();
+        if (bytes.length != 0) {
+            baos.write(bytes);
+        }
+        String output = Utils.bytesToString(baos.toByteArray());
+        return output;
     }
+
+    public static String decrypt(String algorithm, Key key, String cipherText)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException, BadPaddingException {
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] bytes = HexConverter.toByteArray(cipherText);
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        for (int b = bais.read(); b != -1; b = bais.read()) {
+            byte[] temp = { (byte) b };
+            byte[] clearText = cipher.update(temp);
+            baos.write(clearText);
+        }
+
+        byte[] temp = cipher.doFinal();
+        if (temp.length > 0)
+            baos.write(temp);
+
+        return new String(baos.toByteArray());
+    }
+
 
 
     public static byte[] hexStringToBytes(String hexString) throws IOException {
@@ -432,7 +487,6 @@ public class Utils {
         byteBuffer.putLong(value);
         return byteBuffer.array();
     }
-
 
     public static PublicKey pemStringToPublicKey(String pemString) throws IOException {
         StringReader stringReader = new StringReader(pemString);
