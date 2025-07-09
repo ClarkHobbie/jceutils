@@ -361,8 +361,12 @@ public class UtilsTest {
         assert (clearText.equals(result));
     }
 
-    @org.junit.jupiter.api.Test
-    void hexStringToBytes() {
+    @Test
+    public void testHexStringToBytes() throws IOException {
+        String string = "010203";
+        byte[] bytes = Utils.hexStringToBytes(string);
+        byte[] expected = { 1, 2, 3 };
+        assert (Arrays.equals(bytes, expected));
     }
 
     @org.junit.jupiter.api.Test
