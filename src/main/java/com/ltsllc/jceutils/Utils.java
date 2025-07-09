@@ -335,9 +335,9 @@ public class Utils {
     }
 
 
-    public static String encrypt(String algorithm, Key key, String clearText)
+    public static String encrypt(String transformation, Key key, String clearText)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
-        Cipher cipher = Cipher.getInstance(algorithm);
+        Cipher cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.ENCRYPT_MODE, key);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(clearText.getBytes());
@@ -356,9 +356,9 @@ public class Utils {
         return output;
     }
 
-    public static String decrypt(String algorithm, Key key, String cipherText)
+    public static String decrypt(String transformation, Key key, String cipherText)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher = Cipher.getInstance(algorithm);
+        Cipher cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] bytes = HexConverter.toByteArray(cipherText);
         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
