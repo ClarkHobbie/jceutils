@@ -300,12 +300,20 @@ public class UtilsTest {
         assert (Arrays.equals(sha256, expected));
     }
 
-    @org.junit.jupiter.api.Test
-    void byteToHexString() {
+    @Test
+    public void testByteToHexString() {
+        byte[] bytes = { 1,2,3 };
+        String string = Utils.byteToHexString((byte) 1);
+
+        assert (string.equalsIgnoreCase("01"));
     }
 
-    @org.junit.jupiter.api.Test
-    void bytesToString() {
+    @Test
+    public void testBytesToString() {
+        byte[] bytes = { 1,2,3 };
+        String string = Utils.bytesToString(bytes);
+
+        assert (string.equalsIgnoreCase("010203"));
     }
 
     @org.junit.jupiter.api.Test
