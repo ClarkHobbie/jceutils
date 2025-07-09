@@ -369,8 +369,12 @@ public class UtilsTest {
         assert (Arrays.equals(bytes, expected));
     }
 
-    @org.junit.jupiter.api.Test
-    void toByte() {
+    @Test
+    public void testToByte() {
+        char[] input = { '0', '1' };
+        byte expected = 1;
+        byte result = Utils.toByte(input);
+        assert (result == expected);
     }
 
     @org.junit.jupiter.api.Test
