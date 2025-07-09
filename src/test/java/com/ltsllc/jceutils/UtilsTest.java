@@ -316,8 +316,15 @@ public class UtilsTest {
         assert (string.equalsIgnoreCase("010203"));
     }
 
-    @org.junit.jupiter.api.Test
-    void inputStreamToHexString() {
+    @Test
+    public void testInputStreamToHexString() throws Exception {
+        byte[] bytes = { 1,2,3 };
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(bytes);
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        String string = Utils.inputStreamToHexString(bais);
+
+        assert (string.equalsIgnoreCase("010203"));
     }
 
     @org.junit.jupiter.api.Test
