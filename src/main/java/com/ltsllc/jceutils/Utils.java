@@ -30,7 +30,6 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.util.io.pem.PemReader;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -233,23 +232,19 @@ public class Utils {
 
     private static final int BUFFER_SIZE = 8192;
 
-    public static byte[] calculateSha1(FileInputStream fileInputStream)
-            throws NoSuchAlgorithmException, IOException {
+    private static char[] DIGITS = "0123456789ABCDEF".toCharArray();
+
+    public static byte[] calculateSha256(InputStream inputStream)
+            throws NoSuchAlgorithmException, IOException
+    {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-
-        byte buffer[] = new byte[BUFFER_SIZE];
-        int bytesRead;
-
-        do {
-            bytesRead = fileInputStream.read(buffer);
-            messageDigest.update(buffer);
-        } while (BUFFER_SIZE == bytesRead);
+        byte[] buffer = new byte[BUFFER_SIZE];
+        for (int bytesRead = inputStream.read(buffer); bytesRead == BUFFER_SIZE; bytesRead = inputStream.read(buffer)) {
+            messageDigest.update(buffer, 0, bytesRead);
+        }
 
         return messageDigest.digest();
     }
-
-
-    private static char[] DIGITS = "0123456789ABCDEF".toCharArray();
 
     public static String byteToHexString(byte b) {
         StringBuffer sb = new StringBuffer();

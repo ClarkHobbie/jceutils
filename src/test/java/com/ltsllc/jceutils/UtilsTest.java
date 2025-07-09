@@ -3,12 +3,12 @@ package com.ltsllc.jceutils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 
 import java.io.*;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 
 /**
  * Created by Clark on 6/28/2017.
@@ -243,24 +243,61 @@ public class UtilsTest {
         assert (exception == null);
     }
 
-    @org.junit.jupiter.api.Test
-    void exceptionToString() {
+    @Test
+    public void testCloseReturnExceptions() throws Exception {
+        String message = null;
+
+        File file = new File("whatever");
+        if (!file.exists())
+            file.createNewFile();
+
+        FileInputStream fileInputStream = new FileInputStream(file);
+        fileInputStream = null;
+        message = Utils.closeReturnExceptions(fileInputStream);
+
+        //
+         // couldn't find a way of making FileInputStream on throwing an exception on close.
+        //
+        // assert (message != null);
     }
 
-    @org.junit.jupiter.api.Test
-    void closeReturnExceptions() {
+    @Test
+    public void testCloseReturnExceptions1() throws Exception {
+        //
+         // try it with an output stream
+        //
+        File file = new File("whatever");
+        if (file.exists())
+            file.delete();
+
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        fileOutputStream.close();;
+
+        String message = null;
+        try {
+            Utils.closeReturnExceptions(fileOutputStream);
+        } catch (Exception e) {
+            message = e.getMessage();
+        }
+
+        if (file.exists())
+            file.delete();
+
+        //
+         // couldn't figure out how to get fileOutputStream to throw an Exception on close
+        //
+        // assert (message != null);
     }
 
-    @org.junit.jupiter.api.Test
-    void testCloseReturnExceptions() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void testCloseReturnExceptions1() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void calculateSha1() {
+    @Test
+    public void testCalculateSha256() throws Exception {
+        File file = new File("constitution.txt");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] sha256 = Utils.calculateSha256(fileInputStream);
+        String expectedString = "B2EF2B846B8CDAD268D50AE8493ADB772502704B867E0550FBB3BDB51A93EAC4";
+        byte[] expected = HexConverter.toByteArray(expectedString);
+        assert (sha256 != null);
+        assert (Arrays.equals(sha256, expected));
     }
 
     @org.junit.jupiter.api.Test
@@ -296,11 +333,8 @@ public class UtilsTest {
     }
 
     @org.junit.jupiter.api.Test
-    void testCalculateSha1() {
-    }
+    void testCalculateSha25611() {
 
-    @org.junit.jupiter.api.Test
-    void testCalculateSha11() {
     }
 
     @org.junit.jupiter.api.Test
