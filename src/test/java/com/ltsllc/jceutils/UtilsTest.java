@@ -1,26 +1,21 @@
 package com.ltsllc.jceutils;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.provider.PEMUtil;
+import org.bouncycastle.util.io.pem.PemWriter;
 import org.junit.Before;
 import org.junit.Test;
-// import sun.security.ssl.TrustManagerFactoryImpl;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
+import org.bouncycastle.util.io.pem.PemObject;
+
 import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.TrustManagerFactorySpi;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.Base64;
 
 // import static sun.security.ssl.TrustManagerFactoryImpl.*;
 
@@ -406,8 +401,15 @@ public class UtilsTest {
         assert (Arrays.equals(bytes, expected));
     }
 
-    @org.junit.jupiter.api.Test
-    void pemStringToPublicKey() {
+    @Test
+    public void testPemStringToPublicKey() throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+        String string = Utils.toPem(keyPair.getPublic());
+        PublicKey publicKey = Utils.pemStringToPublicKey(string);
+
+        assert (publicKey.equals(keyPair.getPublic()));
     }
 
     @org.junit.jupiter.api.Test
