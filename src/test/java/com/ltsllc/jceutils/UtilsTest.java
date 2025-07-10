@@ -377,8 +377,13 @@ public class UtilsTest {
         assert (result == expected);
     }
 
-    @org.junit.jupiter.api.Test
-    void toNibble() {
+    @Test
+    public void testToNibble() {
+        int result = Utils.toNibble('a');
+        assert (result == 10);
+
+        result = Utils.toNibble('1');
+        assert (result == 1);
     }
 
     @org.junit.jupiter.api.Test

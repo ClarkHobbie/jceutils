@@ -410,6 +410,7 @@ public class Utils {
 
 
     public static int toNibble(char c) {
+        c = Character.toUpperCase(c);
         if (c >= '0' && c <= '9')
             return (c - '0');
         else if (c >= 'A' && c <= 'F')
