@@ -41,6 +41,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -81,6 +82,21 @@ public class Utils {
             "ML-DSA-65",
             "SHA-256"
     };
+
+    public static final String TRANS_AES_CBC_NO_PADDING = "AES/CBC/NoPadding"; // 128
+    public static final String TRANS_AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding"; // 128
+    public static final String TRANS_AES_ECB_NO_PADDING = "AES/ECB/NoPadding"; // 128
+    public static final String TRANS_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding"; // 128
+    public static final String TRANS_DES_CBC_NO_PADDING = "DES/CBC/NoPadding"; // 56
+    public static final String TRANS_DES_CBC_PKCS5PADDING = "DES/CBC/PKCS5Padding"; // 56
+    public static final String TRANS_DES_ECB_NO_PADDING = "DES/ECB/NoPadding"; // 56
+    public static final String TRANS_DES_ECB_PKCS5PADDING = "DES/ECB/PKCS5Padding"; // 56
+    public static final String TRANS_DESEDE_CBC_PKCS5PADDING = "DESede/CBC/PKCS5Padding"; // 168
+    public static final String TRANS_DESEDE_ECB_NO_PADDING = "DESede/ECB/NoPadding"; // 168
+    public static final String TRANS_DESEDE_ECB_PKCS5PADDING = "ESede/ECB/PKCS5Padding"; // 168
+    public static final String TRANS_RSA_ECB_PKCS1PADDING = "RSA/ECB/PKCS1Padding"; // 1024, 2048
+    public static final String TRANS_RSA_ECB_OAEPWITHSHA1ANDMGF1PADDING = "RSA/ECB/OAEPWithSHA-1AndMGF1Padding"; // 1024, 2048
+    public static final String TRANS_RSA_OERWITHSHA256ANDMGF1PADDING = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding"; // 1024, 2048
 
     public static PrivateKey loadKey(String filename, String passwordString, String alias) throws GeneralSecurityException, IOException {
         PrivateKey privateKey = null;
@@ -437,6 +453,9 @@ public class Utils {
         return calculateSha1(buffer);
     }
 
+    public static  TrustManagerFactory createTrustManagerFactory () throws NoSuchAlgorithmException {
+        return TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+    }
 
     public static TrustManagerFactory createTrustManagerFactory(String filename, String passwordString)
             throws IOException, GeneralSecurityException {
@@ -484,9 +503,10 @@ public class Utils {
     }
 
     public static byte[] toBytes(long value) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(Long.BYTES);
-        byteBuffer.putLong(value);
-        return byteBuffer.array();
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.order(ByteOrder.BIG_ENDIAN); // Or ByteOrder.LITTLE_ENDIAN
+        buffer.putLong(value); // Put the long value into the buffer
+        return buffer.array(); // Return the underlying byte array
     }
 
     public static PublicKey pemStringToPublicKey(String pemString) throws IOException {

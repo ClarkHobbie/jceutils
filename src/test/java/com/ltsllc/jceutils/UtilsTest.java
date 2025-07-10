@@ -3,18 +3,26 @@ package com.ltsllc.jceutils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.Test;
+// import sun.security.ssl.TrustManagerFactoryImpl;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.TrustManagerFactorySpi;
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Base64;
+
+// import static sun.security.ssl.TrustManagerFactoryImpl.*;
 
 /**
  * Created by Clark on 6/28/2017.
@@ -386,29 +394,16 @@ public class UtilsTest {
         assert (result == 1);
     }
 
-    @org.junit.jupiter.api.Test
-    void testCalculateSha25611() {
+    @Test
+    public void testToBytes() {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.order(ByteOrder.BIG_ENDIAN); // Or ByteOrder.LITTLE_ENDIAN
+        buffer.putLong(1); // Put the long value into the buffer
+        byte[] expected = buffer.array(); // Return the underlying byte array
 
-    }
+        byte[] bytes = Utils.toBytes(1);
 
-    @org.junit.jupiter.api.Test
-    void createTrustManagerFactory() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void createKeyManagerFactoy() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void createSocketServerSslContext() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void hexStringToString() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void toBytes() {
+        assert (Arrays.equals(bytes, expected));
     }
 
     @org.junit.jupiter.api.Test
