@@ -61,10 +61,12 @@ public class Utils {
     public static final String ALGORITHM_AES = "AES";
     public static final String ALGORITHM_DES = "DES";
     public static final String ALGORITHM_TRIPLE_DES = "Triple DES";
+    public static final String ALGORITHM_RSA = "RSA";
     public static final String[] SYMMETRIC_ALGORITHMS = {
             ALGORITHM_TRIPLE_DES,
             ALGORITHM_AES,
-            ALGORITHM_DES
+            ALGORITHM_DES,
+            ALGORITHM_RSA
     };
 
     public static final String PADDING_PKCS5 = "PKCS5";
@@ -854,7 +856,7 @@ public class Utils {
         }
     }
 
-    public static Certificate selfSign(KeyPair keyPair, String subjectDN)
+    public static Certificate selfSign(KeyPair keyPair, String subjectDN, BigInteger serialNumber)
             throws OperatorCreationException, CertificateException, IOException
     {
         Provider bcProvider = new BouncyCastleProvider();
@@ -864,7 +866,7 @@ public class Utils {
         Date startDate = new Date(now);
 
         X500Name dnName = new X500Name(subjectDN);
-        BigInteger certSerialNumber = new BigInteger(Long.toString(now)); // <-- Using the current timestamp as the certificate serial number
+        BigInteger certSerialNumber = serialNumber; // <-- Using the current timestamp as the certificate serial number
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
@@ -890,4 +892,11 @@ public class Utils {
         return new JcaX509CertificateConverter().setProvider(bcProvider).getCertificate(certBuilder.build(contentSigner));
     }
 
+    public static Certificate selfSign(KeyPair keyPair, String subjectDN)
+            throws OperatorCreationException, CertificateException, IOException  {
+
+        Date now = new Date();
+        BigInteger bigInteger = BigInteger.valueOf(System.currentTimeMillis());
+        return selfSign(keyPair, subjectDN, bigInteger);
+    }
 }

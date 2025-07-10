@@ -1,21 +1,39 @@
 package com.ltsllc.jceutils;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.crypto.util.CipherFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.PEMUtil;
+import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.bouncycastle.util.io.pem.PemObject;
 
+import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import javax.security.auth.x500.X500Principal;
 import java.io.*;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 
 // import static sun.security.ssl.TrustManagerFactoryImpl.*;
 
@@ -412,87 +430,67 @@ public class UtilsTest {
         assert (publicKey.equals(keyPair.getPublic()));
     }
 
-    @org.junit.jupiter.api.Test
-    void publicKeyToPemString() {
+    @Test
+    public void testPublicKeyToPemString() throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        StringWriter stringWriter = new StringWriter();;
+        PEMWriter pemWriter = new PEMWriter(stringWriter);
+        pemWriter.writeObject(keyPair.getPublic());
+        pemWriter.close();
+        String pemString = stringWriter.toString();
+        String string = Utils.publicKeyToPemString(keyPair.getPublic());
+
+        assert (string.equalsIgnoreCase(pemString));
     }
 
-    @org.junit.jupiter.api.Test
-    void createPublicKeyPem() {
+
+    @Test
+    public void testSelfSign() throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC"); // Use Bouncy Castle provider
+        keyPairGenerator.initialize(2048, new SecureRandom()); // 2048-bit key size
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        long now = System.currentTimeMillis();
+
+        Certificate certificate = selfSing(keyPair, "dn=whatever", BigInteger.valueOf(now));
+
+        assert (certificate.equals(Utils.selfSign(keyPair, "dn=whatever", BigInteger.valueOf(now))));
     }
 
-    @org.junit.jupiter.api.Test
-    void writeAsPem() {
+    public Certificate selfSing (KeyPair keyPair, String subjectDn, BigInteger serialNumber) throws Exception {
+        Provider bcProvider = new BouncyCastleProvider();
+        Security.addProvider(bcProvider);
+
+        long now = System.currentTimeMillis();
+        Date startDate = new Date(now);
+
+        X500Name dnName = new X500Name(subjectDn);
+        BigInteger certSerialNumber = serialNumber; // <-- Using the current timestamp as the certificate serial number
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        calendar.add(Calendar.YEAR, 1); // <-- 1 Yr validity
+
+        Date endDate = calendar.getTime();
+
+        String signatureAlgorithm = "SHA256WithRSA"; // <-- Use appropriate signature algorithm based on your keyPair algorithm.
+
+        ContentSigner contentSigner = new JcaContentSignerBuilder(signatureAlgorithm).build(keyPair.getPrivate());
+
+        JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(dnName, certSerialNumber, startDate, endDate, dnName, keyPair.getPublic());
+
+        // Extensions --------------------------
+
+        // Basic Constraints
+        BasicConstraints basicConstraints = new BasicConstraints(true); // <-- true for CA, false for EndEntity
+
+        certBuilder.addExtension(new ASN1ObjectIdentifier("2.5.29.19"), true, basicConstraints); // Basic Constraints is usually marked as critical.
+
+        // -------------------------------------
+
+        return new JcaX509CertificateConverter().setProvider(bcProvider).getCertificate(certBuilder.build(contentSigner));
+
     }
 
-    @org.junit.jupiter.api.Test
-    void testWriteAsPem() {
-    }
 
-    @org.junit.jupiter.api.Test
-    void rsaEncrypt() {
     }
-
-    @org.junit.jupiter.api.Test
-    void testWriteAsPem1() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void readAsString() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void convertPemStringToPublicKey() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void readBytes() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void toStacktrace() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void readTextFile() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void writeTextFile() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void toPem() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void testToPem() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void stringsAreEquivalent() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void stringListsAreEquivalent() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void toEquivalentList() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void hexEncode() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void hexDecode() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void bothEqualCheckForNull() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void selfSign() {
-    }
-}
