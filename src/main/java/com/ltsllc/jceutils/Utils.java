@@ -33,10 +33,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
-import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
-import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.*;
 import org.bouncycastle.operator.bc.BcRSAContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
@@ -865,9 +862,9 @@ public class Utils {
         }
     }
 
-    /*
-    public static Certificate buildCertifcate(KeyPair keyPair, String subjectDN, String signatureAlgorithm, Date start,
-                                              Date end, PrivateKey signer)
+
+    public static Certificate buildCertificate(KeyPair keyPair, String subjectDN, String signatureAlgorithm, Date start,
+                                              Date end)
             throws OperatorCreationException, CertificateException, IOException
     {
         Provider bcProvider = new BouncyCastleProvider();
@@ -887,10 +884,11 @@ public class Utils {
         certBuilder.addExtension(new ASN1ObjectIdentifier("2.5.29.19"), true, basicConstraints); // Basic Constraints is usually marked as critical.
 
         // -------------------------------------
+        ContentSigner contentSigner = new JcaContentSignerBuilder(signatureAlgorithm).build(keyPair.getPrivate());
 
-        return new JcaX509CertificateConverter().setProvider(bcProvider).getCertificate(certBuilder.build(signer));
+        return new JcaX509CertificateConverter().setProvider(bcProvider).getCertificate(certBuilder.build(contentSigner));
     }
-     */
+
 
     public static Certificate selfSign(KeyPair keyPair, String subjectDN, BigInteger serialNumber)
             throws OperatorCreationException, CertificateException, IOException
