@@ -452,12 +452,38 @@ public class UtilsTest {
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         long now = System.currentTimeMillis();
 
-        Certificate certificate = selfSing(keyPair, "dn=whatever", BigInteger.valueOf(now));
+        Certificate certificate = selfSign(keyPair, "dn=whatever", BigInteger.valueOf(now));
 
         assert (certificate.equals(Utils.selfSign(keyPair, "dn=whatever", BigInteger.valueOf(now))));
     }
 
-    public Certificate selfSing (KeyPair keyPair, String subjectDn, BigInteger serialNumber) throws Exception {
+    /*
+    public static Certificate buildCerificate (KeyPair keyPair, Date starting, Date ending, String subjectDn,
+                                               ContentSigner[] signers, String signatureAlgorithm) {
+        Provider bcProvider = new BouncyCastleProvider();
+        Security.addProvider(bcProvider);
+
+        X500Name dnName = new X500Name(subjectDn);
+        BigInteger certSerialNumber = BigInteger.valueOf(System.currentTimeMillis()); // <-- Using the current timestamp as the certificate serial number
+
+        JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(dnName, certSerialNumber, starting,
+                ending, dnName, keyPair.getPublic());
+
+        // Extensions --------------------------
+
+        // Basic Constraints
+        BasicConstraints basicConstraints = new BasicConstraints(true); // <-- true for CA, false for EndEntity
+
+        certBuilder.addExtension(new ASN1ObjectIdentifier("2.5.29.19"), true, basicConstraints); // Basic Constraints is usually marked as critical.
+
+        // -------------------------------------
+
+        return new JcaX509CertificateConverter().setProvider(bcProvider).getCertificate(certBuilder.build(contentSigner));
+
+    }
+
+     */
+    public Certificate selfSign (KeyPair keyPair, String subjectDn, BigInteger serialNumber) throws Exception {
         Provider bcProvider = new BouncyCastleProvider();
         Security.addProvider(bcProvider);
 
@@ -489,7 +515,6 @@ public class UtilsTest {
         // -------------------------------------
 
         return new JcaX509CertificateConverter().setProvider(bcProvider).getCertificate(certBuilder.build(contentSigner));
-
     }
 
 

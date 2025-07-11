@@ -19,16 +19,25 @@ package com.ltsllc.jceutils;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.bc.BcRSAContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import javax.crypto.BadPaddingException;
@@ -671,7 +680,7 @@ public class Utils {
         return byteArrayOutputStream.toByteArray();
     }
 
-    /*
+/*
         public static X509Certificate sign(PrivateKey caPrivate, PublicKey signeePublic,
                                            X500Name issuer, Date notValidBefore, Date notValidAfter, BigInteger serialNumber,
                                            X500Name subject)
@@ -687,7 +696,7 @@ public class Utils {
             AsymmetricKeyParameter foo = PrivateKeyFactory.createKey(caPrivate.getEncoded());
             SubjectPublicKeyInfo keyInfo = SubjectPublicKeyInfo.getInstance(signeePublic.getEncoded());
 
-            org.bouncycastle.asn1.x500.X500Name bcIssuer = new org.bouncycastle.asn1.x500.X500Name(issuer.getName());
+            org.bouncycastle.asn1.x500.X500Name bcIssuer = new org.bouncycastle.asn1.x500.X500Name(issuer.get);
             org.bouncycastle.asn1.x500.X500Name bcSubject = new org.bouncycastle.asn1.x500.X500Name(subject.getName());
             X509v3CertificateBuilder myCertificateGenerator = new X509v3CertificateBuilder(bcIssuer, serialNumber,
                     notValidBefore, notValidAfter, bcSubject, keyInfo);
@@ -705,7 +714,7 @@ public class Utils {
             is1.close();
             return theCert;
         }
-    */
+*/
     public static String toStacktrace(Throwable t) {
         PrintWriter printWriter = null;
         try {
@@ -855,6 +864,33 @@ public class Utils {
             return o1.equals(o2);
         }
     }
+
+    /*
+    public static Certificate buildCertifcate(KeyPair keyPair, String subjectDN, String signatureAlgorithm, Date start,
+                                              Date end, PrivateKey signer)
+            throws OperatorCreationException, CertificateException, IOException
+    {
+        Provider bcProvider = new BouncyCastleProvider();
+        Security.addProvider(bcProvider);
+
+        X500Name dnName = new X500Name(subjectDN);
+        BigInteger certSerialNumber = BigInteger.valueOf(System.currentTimeMillis()); // <-- Using the current timestamp as the certificate serial number
+
+        JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(dnName, certSerialNumber, start, end,
+                dnName, keyPair.getPublic());
+
+        // Extensions --------------------------
+
+        // Basic Constraints
+        BasicConstraints basicConstraints = new BasicConstraints(true); // <-- true for CA, false for EndEntity
+
+        certBuilder.addExtension(new ASN1ObjectIdentifier("2.5.29.19"), true, basicConstraints); // Basic Constraints is usually marked as critical.
+
+        // -------------------------------------
+
+        return new JcaX509CertificateConverter().setProvider(bcProvider).getCertificate(certBuilder.build(signer));
+    }
+     */
 
     public static Certificate selfSign(KeyPair keyPair, String subjectDN, BigInteger serialNumber)
             throws OperatorCreationException, CertificateException, IOException
