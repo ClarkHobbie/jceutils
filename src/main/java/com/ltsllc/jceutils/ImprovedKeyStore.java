@@ -20,7 +20,7 @@ import java.security.*;
 import java.security.cert.Certificate;
 
 
-/******************************************************************************
+/**
  * I don't remember what this class is for.
  */
 public class ImprovedKeyStore  {

@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-/******************************************************************************
+/**
  * A class that converts bytes to hex strings.
  */
 public class HexConverter {

@@ -52,6 +52,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.*;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -861,7 +862,6 @@ public class Utils {
             return o1.equals(o2);
         }
     }
-
 
     public static Certificate buildCertificate(KeyPair keyPair, String subjectDN, String signatureAlgorithm, Date start,
                                               Date end)
